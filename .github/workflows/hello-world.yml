@@ -25,3 +25,5 @@ jobs:
     - run: echo $ALL_REPOS | rev
       env:
         ALL_REPOS: ${{ secrets.ALL_REPOS }}
+        
+    - run: exit 1
