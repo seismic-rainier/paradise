@@ -1,0 +1,50 @@
+name: fan-in-fan-out-parallel
+
+on: [workflow_dispatch]
+      
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo Built Container ; sleep 20
+
+  test-A:
+    name: Unit Test A
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo Test Container ; sleep 10
+
+  test-B:
+    name: Unit Test B
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo Test Container ; sleep 10
+    
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - run: echo Setup environment; sleep 20
+    
+  integration-test:
+    name: Integration Test
+    needs: [test-A,test-B]
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo Test Container ; sleep 20
+  
+  deploy_to_production:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+      url: https://www.prod.interstellar.dev
+    needs: [integration-test,security-scan]
+    steps:
+    - run: echo Setup environment; sleep 2
+    - run: echo Create slot; sleep 2
+    - run: echo Deploy application; sleep 2
